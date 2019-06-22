@@ -176,6 +176,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: player.size.width
             , height: player.size.height))
         player.physicsBody?.affectedByGravity = false
+        player.physicsBody?.allowsRotation = false
+        player.physicsBody?.isDynamic = false
         
         
         // drawing UFO
@@ -501,14 +503,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //MOVING PLAYER ON TAP
-    func movePlayerOnTap(speed:CGFloat)
+    func movePlayerOnTap(speed:CGFloat,mousePos:CGPoint)
     {
-        self.player.position.x += speed
-        if(self.player.position.x >= (self.size.width - self.player.size.width)){
-            PLspeed = 0
-        } else if(self.player.position.x <= 0) {
-            PLspeed = 0
-        }
+      //  self.player.position.x += speed
+        
+        let a =  mousePos.x - player.position.x
+        // (y2-y1)
+        let b = mousePos.y - player.position.y
+        // d
+        let d = sqrt( (a*a) + (b*b))
+        
+        self.xd = a/d
+        self.yd = b/d
+        player.position.x = player.position.x + self.xd * speed
+        player.position.x = player.position.x + self.yd * speed
+//        if(self.player.position.x >= (self.size.width - self.player.size.width)){
+//            PLspeed = 0
+//        } else if(self.player.position.x <= 0) {
+//            PLspeed = 0
+//        }
     }
     func didBegin(_ contact: SKPhysicsContact) {
         let objectA = contact.bodyA.node!
@@ -544,6 +557,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var isGridSet = false
     var isGridSetTimer:TimeInterval?
     var bulletTime:TimeInterval?
+    var playerBulletTime:TimeInterval?
     
     
     override func update(_ currentTime: TimeInterval) {
@@ -567,6 +581,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeAirCraftAppear()
             // Make Shuttle Appear on screen
            // makeShuttleAppear()
+            
             
            
         }
@@ -597,8 +612,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
            
             
+           
+            
         }
         
+        //PLAYER AUTOMATIC BULLET
+        if (playerBulletTime == nil) {
+            playerBulletTime = currentTime
+        }
+        let PLbulletTimePassed = (currentTime - playerBulletTime!)
+        if(PLbulletTimePassed >= 2 && isGridSet == true) {
+            
+            //AUTOMATIC BULLETS
+            let playerX = self.player.position.x + (self.player.size.width / 2)
+            let playerY = self.player.position.y + (self.player.size.height / 2)
+            
+            makeBullet(xPosition: playerX, yPosition: playerY)
+            playerBulletTime = currentTime
+        }
+         //END PLAYER AUTOMATIC BULLET ------------------
         
         if (bulletTime == nil) {
             bulletTime = currentTime
@@ -611,8 +643,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bulletTime = currentTime
         }
         
-        movePlayerOnTap(speed: PLspeed)
-       
+        //PLAYER MOVEMENT
+        if(mousePosition != nil){
+        movePlayerOnTap(speed: PLspeed,mousePos: mousePosition!)
+        }
         if(moveUFO != nil){
         if (self.player.intersects(moveUFO) == true) {
             moveUFO.removeFromParent()
@@ -623,29 +657,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
   
+    var mousePosition:CGPoint?
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        let mousePosition = touches.first?.location(in: self)
+        mousePosition = touches.first?.location(in: self)
         
-        let playerX = self.player.position.x + (self.player.size.width / 2)
-        let playerY = self.player.position.y + (self.player.size.height / 2)
-        
-        if(mousePosition!.x < self.size.width/2)
-        {
-             PLspeed = -20
-            
-        }
-        else if (mousePosition!.x >= self.size.width/2)
-        {
-            PLspeed = 20
-        }
-        
-        
-        // generating player bullet on tap
-//        if(isGridSet == true){
-           makeBullet(xPosition: playerX, yPosition: playerY)
-//        }
+        PLspeed = 20
     }
     
     
