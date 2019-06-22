@@ -200,11 +200,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(self.player)
         
-        player.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: player.size.width
+        self.player.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: player.size.width
             , height: player.size.height))
-        player.physicsBody?.affectedByGravity = false
-        player.physicsBody?.allowsRotation = false
-        player.physicsBody?.isDynamic = false
+        self.player.physicsBody?.affectedByGravity = false
+        self.player.physicsBody?.allowsRotation = false
+        self.player.physicsBody?.isDynamic = false
+        self.player.physicsBody?.categoryBitMask = 4
+        self.player.physicsBody?.collisionBitMask = 8
+        self.player.physicsBody?.contactTestBitMask = 8
         
         
         // drawing UFO
@@ -442,7 +445,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bullet.physicsBody?.allowsRotation = false
         bullet.physicsBody?.categoryBitMask = 1
         bullet.physicsBody?.collisionBitMask = 2
-        bullet.physicsBody?.collisionBitMask = 2
+        bullet.physicsBody?.contactTestBitMask = 2
         // add the cat to the cats array
         self.bullets.append(bullet)
     }
@@ -474,7 +477,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // add the bullets to the scene
         addChild(airBullet)
+        //---------------------------
+        //CREATING PHYSICS AND MASKS
+        //---------------------------
+        airBullet.physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(width: airBullet.size.width, height: airBullet.size.height))
+        airBullet.name = "airbullet"
+        airBullet.physicsBody?.affectedByGravity = false
+       // airBullet.physicsBody?.allowsRotation = false
+        //airBullet.physicsBody?.isDynamic = false
+       airBullet.physicsBody?.categoryBitMask = 8
+//        airBullet.physicsBody?.collisionBitMask = 4
+//        airBullet.physicsBody?.contactTestBitMask = 4
         
+        //---------------------------
+        //END CREATING PHYSICS AND MASKS
+        //---------------------------
         // add the cat to the cats array
         self.airCraftbullets.append(airBullet)
     }
@@ -556,35 +574,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         print("COLLISION!!!")
         // COLLISION WITH UFO
         if (objectA.name == "bullet" && objectB.name == "ufo") {
-            print("GAME OVER!")
+           // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
-            print("GAME OVER!")
+            //print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
         }
         // COLLISION WITH AIRCRAFT
-        else if (objectA.name == "bullet" && objectB.name == "aircraft") {
-            print("GAME OVER!")
+         if (objectA.name == "bullet" && objectB.name == "aircraft") {
+           // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
         }
         else if (objectA.name == "aircraft" && objectB.name == "bullet") {
-            print("GAME OVER!")
+           // print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
         }
         
             // COLLISION WITH SHUTTLE
-        else if (objectA.name == "bullet" && objectB.name == "shuttle") {
-            print("GAME OVER!")
+         if (objectA.name == "bullet" && objectB.name == "shuttle") {
+           // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
         }
         else if (objectA.name == "shuttle" && objectB.name == "bullet") {
-            print("GAME OVER!")
+           // print("GAME OVER!")
+            objectA.removeFromParent()
+            objectB.removeFromParent()
+        }
+        // ENEMY BULLET WITH PLAYER
+         if (objectA.name == "airbullet" && objectB.name == "jet") {
+            print("PLAYER DIE")
+            objectB.removeFromParent()
+            objectA.removeFromParent()
+        }
+        else if (objectA.name == "jet" && objectB.name == "airbullet") {
+            print("PLAYER DIE")
             objectA.removeFromParent()
             objectB.removeFromParent()
         }
@@ -636,10 +665,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Make Shuttle Appear on screen
            // makeShuttleAppear()
             
-            
            
         }
-
         
         // gird setting flag
         if(trackUfoCount == 4 && trackAirCraftCount == 6 /* && trackShuttleCount == 10*/){
@@ -664,10 +691,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //calling the enemy move functon
             enemyTowardsPlayer(time: currentTime)
             
-           
-            
-           
-            
         }
         
         //PLAYER AUTOMATIC BULLET
@@ -678,10 +701,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(PLbulletTimePassed >= 2 && isGridSet == true) {
             
             //AUTOMATIC BULLETS
-            let playerX = self.player.position.x + (self.player.size.width / 2)
-            let playerY = self.player.position.y + (self.player.size.height / 2)
-            
-            makeBullet(xPosition: playerX, yPosition: playerY)
+//            let playerX = self.player.position.x + (self.player.size.width / 2)
+//            let playerY = self.player.position.y + (self.player.size.height / 2)
+//
+//            makeBullet(xPosition: playerX, yPosition: playerY)
             playerBulletTime = currentTime
         }
          //END PLAYER AUTOMATIC BULLET ------------------
@@ -691,7 +714,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         let bulletTimePassed = (currentTime - bulletTime!)
-        if(bulletTimePassed >= 5 && isGridSet == true) {
+        if(bulletTimePassed >= 1 && isGridSet == true) {
             makeAirCraftBullet()
             
             bulletTime = currentTime
