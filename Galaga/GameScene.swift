@@ -87,6 +87,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // add the cat to the scene
         addChild(airCraft)
+        //---------------------------
+        //CREATING PHYSICS AND MASKS
+        //---------------------------
+        airCraft.physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(width: airCraft.size.width, height: airCraft.size.height))
+        airCraft.name = "aircraft"
+        airCraft.physicsBody?.affectedByGravity = false
+        airCraft.physicsBody?.affectedByGravity = false
+        airCraft.physicsBody?.allowsRotation = false
+        airCraft.physicsBody?.isDynamic = false
+        airCraft.physicsBody?.categoryBitMask = 2
+        airCraft.physicsBody?.collisionBitMask = 1
+        airCraft.physicsBody?.contactTestBitMask = 1
+        
+        //---------------------------
+        //END CREATING PHYSICS AND MASKS
+        //---------------------------
         
         // add the cat to the cats array
         self.aircrafts.append(airCraft)
@@ -101,6 +118,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         shuttle.anchorPoint = CGPoint(x: 0, y: 0)
         // add the cat to the scene
         addChild(shuttle)
+        shuttle.physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(width: shuttle.size.width, height: shuttle.size.height))
+        shuttle.name = "shuttle"
+        shuttle.physicsBody?.affectedByGravity = false
+        shuttle.physicsBody?.affectedByGravity = false
+        shuttle.physicsBody?.allowsRotation = false
+        shuttle.physicsBody?.isDynamic = false
+        shuttle.physicsBody?.categoryBitMask = 2
+        shuttle.physicsBody?.collisionBitMask = 1
+        shuttle.physicsBody?.contactTestBitMask = 1
         
         // add the cat to the cats array
         self.shuttles.append(shuttle)
@@ -516,7 +543,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.xd = a/d
         self.yd = b/d
         player.position.x = player.position.x + self.xd * speed
-        player.position.x = player.position.x + self.yd * speed
+        player.position.x = (player.position.x + self.yd * speed)
 //        if(self.player.position.x >= (self.size.width - self.player.size.width)){
 //            PLspeed = 0
 //        } else if(self.player.position.x <= 0) {
@@ -527,15 +554,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let objectA = contact.bodyA.node!
         let objectB = contact.bodyB.node!
         print("COLLISION!!!")
-        // GAME OVER RULES
+        // COLLISION WITH UFO
         if (objectA.name == "bullet" && objectB.name == "ufo") {
             print("GAME OVER!")
             objectB.removeFromParent()
+            objectA.removeFromParent()
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             print("GAME OVER!")
             objectA.removeFromParent()
+            objectB.removeFromParent()
         }
+        // COLLISION WITH AIRCRAFT
+        else if (objectA.name == "bullet" && objectB.name == "aircraft") {
+            print("GAME OVER!")
+            objectB.removeFromParent()
+            objectA.removeFromParent()
+        }
+        else if (objectA.name == "aircraft" && objectB.name == "bullet") {
+            print("GAME OVER!")
+            objectA.removeFromParent()
+            objectB.removeFromParent()
+        }
+        
+            // COLLISION WITH SHUTTLE
+        else if (objectA.name == "bullet" && objectB.name == "shuttle") {
+            print("GAME OVER!")
+            objectB.removeFromParent()
+            objectA.removeFromParent()
+        }
+        else if (objectA.name == "shuttle" && objectB.name == "bullet") {
+            print("GAME OVER!")
+            objectA.removeFromParent()
+            objectB.removeFromParent()
+        }
+        
+        
 //        else if (objectA.name == "cat" && objectB.name == "bed") {
 //            print("YOU WIN")
 //            // stop moving the cat when game wins
