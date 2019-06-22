@@ -9,7 +9,7 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // Variables for images
     let background = SKSpriteNode(imageNamed: "background")
@@ -50,12 +50,29 @@ class GameScene: SKScene {
         // lets add some cats
         let ufo = SKSpriteNode(imageNamed: "ufo")
         
+        
         ufo.position = CGPoint(x:0, y:self.size.height + 100)
         ufo.anchorPoint = CGPoint(x: 0, y: 0)
         
         // add the cat to the scene
         addChild(ufo)
+        //---------------------------
+        //CREATING PHYSICS AND MASKS
+        //---------------------------
+        ufo.physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(width: ufo.size.width, height: ufo.size.height))
+        ufo.name = "ufo"
+        ufo.physicsBody?.affectedByGravity = false
+        ufo.physicsBody?.affectedByGravity = false
+        ufo.physicsBody?.allowsRotation = false
+        ufo.physicsBody?.isDynamic = false
+        ufo.physicsBody?.categoryBitMask = 2
+        ufo.physicsBody?.collisionBitMask = 1
+        ufo.physicsBody?.contactTestBitMask = 1
         
+        //---------------------------
+        //END CREATING PHYSICS AND MASKS
+        //---------------------------
         // add the cat to the cats array
         self.ufos.append(ufo)
     }
@@ -146,12 +163,20 @@ class GameScene: SKScene {
     
     var timer = Timer()
     override func didMove(to view: SKView) {
+         self.physicsWorld.contactDelegate = self
         self.createBackground()
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameScene.updateTime), userInfo: nil, repeats: true)
         // Create player
         self.player.position = CGPoint(x: 0, y: 100)
         self.player.anchorPoint = CGPoint(x: 0, y: 0)
+        player.name = "jet"
+        
         addChild(self.player)
+        
+        player.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: player.size.width
+            , height: player.size.height))
+        player.physicsBody?.affectedByGravity = false
+        
         
         // drawing UFO
         for _ in 0...3 {
@@ -382,7 +407,13 @@ class GameScene: SKScene {
         
         // add the cat to the scene
         addChild(bullet)
-        
+        bullet.name = "bullet"
+        bullet.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: bullet.size.width,height: bullet.size.height))
+        bullet.physicsBody?.affectedByGravity = false
+        bullet.physicsBody?.allowsRotation = false
+        bullet.physicsBody?.categoryBitMask = 1
+        bullet.physicsBody?.collisionBitMask = 2
+        bullet.physicsBody?.collisionBitMask = 2
         // add the cat to the cats array
         self.bullets.append(bullet)
     }
@@ -446,7 +477,6 @@ class GameScene: SKScene {
         }
        
         let timePassed = (time - pastTime!)
-        //checking if 10 seconds passed and there are ufo's left in the array
         if (timePassed >= 10 && ufos.count > 1) {
        
          let randomUFOMove = Int.random(in: 0...(ufos.count - 1))
@@ -480,8 +510,33 @@ class GameScene: SKScene {
             PLspeed = 0
         }
     }
-    
-    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let objectA = contact.bodyA.node!
+        let objectB = contact.bodyB.node!
+        print("COLLISION!!!")
+        // GAME OVER RULES
+        if (objectA.name == "bullet" && objectB.name == "ufo") {
+            print("GAME OVER!")
+            objectB.removeFromParent()
+        }
+        else if (objectA.name == "ufo" && objectB.name == "bullet") {
+            print("GAME OVER!")
+            objectA.removeFromParent()
+        }
+//        else if (objectA.name == "cat" && objectB.name == "bed") {
+//            print("YOU WIN")
+//            // stop moving the cat when game wins
+//            objectA.physicsBody?.isDynamic = false
+//        }
+//        else if (objectA.name == "bed" && objectB.name == "cat") {
+//            print("YOU WIN")
+//            // stop moving the cat when game wins
+//            objectB.physicsBody?.isDynamic = false;
+//        }
+
+        // GAME WIN RULES
+
+    }
     
     
     
@@ -539,6 +594,9 @@ class GameScene: SKScene {
             
             //calling the enemy move functon
             enemyTowardsPlayer(time: currentTime)
+            
+           
+            
         }
         
         
@@ -555,6 +613,12 @@ class GameScene: SKScene {
         
         movePlayerOnTap(speed: PLspeed)
        
+        if(moveUFO != nil){
+        if (self.player.intersects(moveUFO) == true) {
+            moveUFO.removeFromParent()
+        }
+        
+        }
         
     }
     
@@ -564,8 +628,8 @@ class GameScene: SKScene {
         
         let mousePosition = touches.first?.location(in: self)
         
-      //  let playerX = self.player.position.x + (self.player.size.width / 2)
-        //let playerY = self.player.position.y + (self.player.size.height / 2)
+        let playerX = self.player.position.x + (self.player.size.width / 2)
+        let playerY = self.player.position.y + (self.player.size.height / 2)
         
         if(mousePosition!.x < self.size.width/2)
         {
@@ -580,7 +644,7 @@ class GameScene: SKScene {
         
         // generating player bullet on tap
 //        if(isGridSet == true){
-//            makeBullet(xPosition: playerX, yPosition: playerY)
+           makeBullet(xPosition: playerX, yPosition: playerY)
 //        }
     }
     
