@@ -701,10 +701,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(PLbulletTimePassed >= 2 && isGridSet == true) {
             
             //AUTOMATIC BULLETS
-//            let playerX = self.player.position.x + (self.player.size.width / 2)
-//            let playerY = self.player.position.y + (self.player.size.height / 2)
-//
-//            makeBullet(xPosition: playerX, yPosition: playerY)
+            let playerX = self.player.position.x + (self.player.size.width / 2)
+            let playerY = self.player.position.y + (self.player.size.height / 2)
+
+            makeBullet(xPosition: playerX, yPosition: playerY)
             playerBulletTime = currentTime
         }
          //END PLAYER AUTOMATIC BULLET ------------------
@@ -714,7 +714,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         let bulletTimePassed = (currentTime - bulletTime!)
-        if(bulletTimePassed >= 1 && isGridSet == true) {
+        if(bulletTimePassed >= 5 && isGridSet == true) {
             makeAirCraftBullet()
             
             bulletTime = currentTime
