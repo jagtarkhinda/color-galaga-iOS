@@ -20,6 +20,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scoreLabel: SKLabelNode!
     var timeLabel: SKLabelNode!
     var remainingLife = 3
+    var UFOCount = 0;
+    var UFODown = 0
+    var AIRCRAFTCount = 0;
     var remainingLifeNode:[SKSpriteNode] = []
     var decreaseLivescount:Bool = false;
     var timeLeft = 119
@@ -461,7 +464,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //remove bullet from scene
             if(bullets[i].position.y > self.size.height)
             {
-                print("remving bullet at \(bullets[i])")
                 bullets[i].removeFromParent()
             }
         }
@@ -537,6 +539,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        
          let randomUFOMove = Int.random(in: 0...(ufos.count - 1))
             moveUFO = ufos[randomUFOMove]
+            UFODown = 0
             ufos.remove(at: randomUFOMove)
             pastTime = time
            
@@ -583,25 +586,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // COLLISION WITH UFO
         if (objectA.name == "bullet" && objectB.name == "ufo") {
            // print("GAME OVER!")
-            //objectB.removeFromParent()
-         //   objectA.removeFromParent()
+            objectB.removeFromParent()
+            objectA.removeFromParent()
+            UFOCount += 1
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             //print("GAME OVER!")
            
-          //  objectA.removeFromParent()
-          //  objectB.removeFromParent()
+           objectA.removeFromParent()
+            objectB.removeFromParent()
+            UFOCount += 1
         }
         // COLLISION WITH AIRCRAFT
          if (objectA.name == "bullet" && objectB.name == "aircraft") {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
+            AIRCRAFTCount += 1
         }
         else if (objectA.name == "aircraft" && objectB.name == "bullet") {
            // print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
+            AIRCRAFTCount += 1
         }
         
             // COLLISION WITH SHUTTLE
@@ -618,13 +625,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // ENEMY BULLET WITH PLAYER
          if (objectA.name == "airbullet" && objectB.name == "jet") {
             print("PLAYER DIE")
-            //objectB.removeFromParent()
-           // objectA.removeFromParent()
+            objectB.removeFromParent()
+           objectA.removeFromParent()
+            decreaseLivescount = true
+            decreasePlayerLifeCount(live: decreaseLivescount)
+            //decrease player life
         }
         else if (objectA.name == "jet" && objectB.name == "airbullet") {
             print("PLAYER DIE")
-          //  objectA.removeFromParent()
-          //  objectB.removeFromParent()
+          objectA.removeFromParent()
+          objectB.removeFromParent()
+            decreaseLivescount = true
+            decreasePlayerLifeCount(live: decreaseLivescount)
         }
         
         
@@ -643,6 +655,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     }
     
+    //FUNCTION TO REMOVE THE PLAYER FROM SCENE AND DECREASE THE LIVES
+    func decreasePlayerLifeCount(live:Bool){
+        if(decreaseLivescount == true ){
+            //removing from scene
+            remainingLifeNode.last?.removeFromParent()
+            
+            //removing from array
+            self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
+            print(" show \(self.remainingLifeNode.count)")
+            print(" flag before \(decreaseLivescount) ")
+            player.position = CGPoint(x: 400, y: 100)
+            addChild(self.player)
+            //RESTARTING THE SCENE IF PLAYER LIVES ARE OVER
+            if(remainingLifeNode.count == 0)
+            {
+                let newScene = GameScene(size: self.size)
+                newScene.scaleMode = self.scaleMode
+                let animation = SKTransition.fade(withDuration: 1.0)
+                self.view?.presentScene(newScene, transition: animation)
+            }
+            decreaseLivescount = false;
+            print(" flag after \(decreaseLivescount) ")
+        }
+    }
+    
     
     
     // Variables to set grids and firing aricraft bullet at random time
@@ -652,8 +689,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var playerBulletTime:TimeInterval?
     var ufoCollideTime:TimeInterval?
     
+    // ---------------------
+    // UPDATE FUNCTION
+    //--------------------
     
     override func update(_ currentTime: TimeInterval) {
+        
+        //CHECKING GAME WIN CONDITION
+        print("UFO's LEft: \(UFOCount)")
         
         if (ufoCollideTime == nil) {
             ufoCollideTime = currentTime
@@ -747,9 +790,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // print a message every 3 seconds
             let collidehapped = (currentTime - ufoCollideTime!)
             
-          
-               
-        if (self.player.intersects(moveUFO) == true) {
+            
+        
+        if (self.player.intersects(moveUFO) == true || moveUFO.position.y < 100) {
             // ufo die
             if (collidehapped >= 4) {
             moveUFO.removeFromParent()
@@ -757,34 +800,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //player die
             player.removeFromParent()
             //live decrease
-            
+            //UFOCount += 1
               decreaseLivescount = true
              ufoCollideTime = currentTime
         }
             }
+    
         }
         
         //taking count because it collides too many times
-        if(decreaseLivescount == true ){
-            //removing from scene
-            remainingLifeNode.last?.removeFromParent()
-            
-            //removing from array
-            self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
-            print(" show \(self.remainingLifeNode.count)")
-            print(" flag before \(decreaseLivescount) ")
-            player.position = CGPoint(x: 400, y: 100)
-            addChild(self.player)
-            if(remainingLifeNode.count == 0)
-            {
-                let newScene = GameScene(size: self.size)
-                newScene.scaleMode = self.scaleMode
-                let animation = SKTransition.fade(withDuration: 1.0)
-                self.view?.presentScene(newScene, transition: animation)
-            }
-            decreaseLivescount = false;
-             print(" flag after \(decreaseLivescount) ")
-        }
+        decreasePlayerLifeCount(live:decreaseLivescount)
+        
         
     }
     
