@@ -458,6 +458,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(bullets.count != 0){
         for i in 0...(bullets.count - 1) {
             self.bullets[i].position.y = self.bullets[i].position.y + 30
+            //remove bullet from scene
+            if(bullets[i].position.y > self.size.height)
+            {
+                print("remving bullet at \(bullets[i])")
+                bullets[i].removeFromParent()
+            }
         }
         }
     }
@@ -711,8 +717,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //AUTOMATIC BULLETS
             let playerX = self.player.position.x + (self.player.size.width / 2)
             let playerY = self.player.position.y + (self.player.size.height / 2)
-
-            makeBullet(xPosition: playerX, yPosition: playerY)
+            //making bullets only if player lives are left
+            if(remainingLifeNode.count != 0){
+                makeBullet(xPosition: playerX, yPosition: playerY)
+                
+            }
             playerBulletTime = currentTime
         }
          //END PLAYER AUTOMATIC BULLET ------------------
