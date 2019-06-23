@@ -21,7 +21,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timeLabel: SKLabelNode!
     var remainingLife = 3
     var remainingLifeNode:[SKSpriteNode] = []
+    var decreaseLivescount = 0
     var timeLeft = 119
+    // variable to store scores
+    var socreCount:Int = 0;
     var PLspeed: CGFloat = 0
     
     // Enemy
@@ -571,7 +574,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         let objectA = contact.bodyA.node!
         let objectB = contact.bodyB.node!
-        print("COLLISION!!!")
         // COLLISION WITH UFO
         if (objectA.name == "bullet" && objectB.name == "ufo") {
            // print("GAME OVER!")
@@ -580,6 +582,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             //print("GAME OVER!")
+           
             objectA.removeFromParent()
             objectB.removeFromParent()
         }
@@ -724,9 +727,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(mousePosition != nil){
         movePlayerOnTap(speed: PLspeed,mousePos: mousePosition!)
         }
+        //Detecting intersection with ufo
         if(moveUFO != nil){
         if (self.player.intersects(moveUFO) == true) {
+            // ufo die
             moveUFO.removeFromParent()
+            //player die
+            player.removeFromParent()
+            //live decrease
+            
+            //taking count because it collides too many times
+            if(decreaseLivescount == 0 ){
+               //removing from scene
+                 remainingLifeNode.last?.removeFromParent()
+                
+               //removing from array
+                self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
+                decreaseLivescount += 1;
+                 self.player.position = CGPoint(x: 400, y: 100)
+                self.addChild(player)
+            }
         }
         
         }
