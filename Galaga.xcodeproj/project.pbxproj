@@ -17,6 +17,10 @@
 		45B5D3A022BA612A007E2F73 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45B5D39E22BA612A007E2F73 /* LaunchScreen.storyboard */; };
 		45B5D3AB22BA612A007E2F73 /* GalagaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5D3AA22BA612A007E2F73 /* GalagaTests.swift */; };
 		45B5D3B622BA612B007E2F73 /* GalagaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5D3B522BA612B007E2F73 /* GalagaUITests.swift */; };
+		AF05D02122C026FA0045058D /* ufodie.wav in Resources */ = {isa = PBXBuildFile; fileRef = AF05D01D22C026F90045058D /* ufodie.wav */; };
+		AF05D02222C026FA0045058D /* playerdie.wav in Resources */ = {isa = PBXBuildFile; fileRef = AF05D01E22C026F90045058D /* playerdie.wav */; };
+		AF05D02322C026FA0045058D /* playershoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = AF05D01F22C026F90045058D /* playershoot.wav */; };
+		AF05D02422C026FA0045058D /* ufocoming.wav in Resources */ = {isa = PBXBuildFile; fileRef = AF05D02022C026F90045058D /* ufocoming.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +57,10 @@
 		45B5D3B122BA612A007E2F73 /* GalagaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GalagaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45B5D3B522BA612B007E2F73 /* GalagaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalagaUITests.swift; sourceTree = "<group>"; };
 		45B5D3B722BA612B007E2F73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AF05D01D22C026F90045058D /* ufodie.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ufodie.wav; sourceTree = "<group>"; };
+		AF05D01E22C026F90045058D /* playerdie.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playerdie.wav; sourceTree = "<group>"; };
+		AF05D01F22C026F90045058D /* playershoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playershoot.wav; sourceTree = "<group>"; };
+		AF05D02022C026F90045058D /* ufocoming.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ufocoming.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +115,10 @@
 				45B5D39122BA6126007E2F73 /* GameScene.sks */,
 				45B5D39322BA6126007E2F73 /* Actions.sks */,
 				45B5D39522BA6126007E2F73 /* GameScene.swift */,
+				AF05D01E22C026F90045058D /* playerdie.wav */,
+				AF05D01F22C026F90045058D /* playershoot.wav */,
+				AF05D02022C026F90045058D /* ufocoming.wav */,
+				AF05D01D22C026F90045058D /* ufodie.wav */,
 				45B5D39722BA6126007E2F73 /* GameViewController.swift */,
 				45B5D39922BA6126007E2F73 /* Main.storyboard */,
 				45B5D39C22BA612A007E2F73 /* Assets.xcassets */,
@@ -240,8 +252,12 @@
 			files = (
 				45B5D39B22BA6126007E2F73 /* Main.storyboard in Resources */,
 				45B5D39222BA6126007E2F73 /* GameScene.sks in Resources */,
+				AF05D02422C026FA0045058D /* ufocoming.wav in Resources */,
+				AF05D02222C026FA0045058D /* playerdie.wav in Resources */,
 				45B5D39D22BA612A007E2F73 /* Assets.xcassets in Resources */,
 				45B5D3A022BA612A007E2F73 /* LaunchScreen.storyboard in Resources */,
+				AF05D02322C026FA0045058D /* playershoot.wav in Resources */,
+				AF05D02122C026FA0045058D /* ufodie.wav in Resources */,
 				45B5D39422BA6126007E2F73 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

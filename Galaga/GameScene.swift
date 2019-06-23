@@ -8,6 +8,7 @@
 
 import SpriteKit
 import GameplayKit
+import AVKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -22,6 +23,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var remainingLife = 3
     var UFODown = 0
     var playerScore = 0;
+    var playershoot:AVAudioPlayer!
+    var playerdie:AVAudioPlayer!
+    var ufocoming:AVAudioPlayer!
+    var ufodie:AVAudioPlayer!
     var remainingLifeNode:[SKSpriteNode] = []
     var decreaseLivescount:Bool = false;
     var timeLeft = 119
@@ -195,6 +200,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var timer = Timer()
     override func didMove(to view: SKView) {
+        
+        //SOUNDS
+        
+        let ul1 = Bundle.main.url(forResource: "playershoot", withExtension: "wav")
+        let ul2 = Bundle.main.url(forResource: "playerdie", withExtension: "wav")
+        let ul3 = Bundle.main.url(forResource: "ufocoming", withExtension: "wav")
+        let ul4 = Bundle.main.url(forResource: "ufodie", withExtension: "wav")
+        do{
+            playershoot =
+                try AVAudioPlayer(contentsOf: ul1!)
+            playerdie =
+                  try  AVAudioPlayer(contentsOf: ul2!)
+            ufocoming =
+               try AVAudioPlayer(contentsOf: ul3!)
+            ufodie =
+              try  AVAudioPlayer(contentsOf: ul4!)
+            playershoot.prepareToPlay()
+             playerdie.prepareToPlay()
+             ufocoming.prepareToPlay()
+             ufodie.prepareToPlay()
+        }
+        catch{
+            print("error")
+        }
+        ///-END SOUNDS
+        
+        
          self.physicsWorld.contactDelegate = self
         self.createBackground()
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameScene.updateTime), userInfo: nil, repeats: true)
@@ -543,6 +575,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             moveUFO.physicsBody?.collisionBitMask = 1
             moveUFO.physicsBody?.contactTestBitMask = 1
             UFODown = 0
+            ufocoming.play()
             ufos.remove(at: randomUFOMove)
             pastTime = time
            
@@ -593,6 +626,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectA.removeFromParent()
             playerScore += 100
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
            
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
@@ -601,6 +635,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectB.removeFromParent()
             playerScore += 100
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
             
         }
         if (objectA.name == "bullet" && objectB.name == "coming") {
@@ -610,6 +645,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             moveUFO.physicsBody = nil
             playerScore += 200
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
           
         }
         else if (objectA.name == "coming" && objectB.name == "bullet") {
@@ -619,6 +655,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             moveUFO.physicsBody = nil
             playerScore += 200
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
            
         }
         // COLLISION WITH AIRCRAFT
@@ -628,6 +665,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectA.removeFromParent()
             playerScore += 50
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
             
         }
         else if (objectA.name == "aircraft" && objectB.name == "bullet") {
@@ -636,6 +674,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectB.removeFromParent()
             playerScore += 50
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
           
         }
         
@@ -646,6 +685,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectA.removeFromParent()
             playerScore += 20
             scoreLabel.text = ("\(playerScore)")
+            ufodie.play()
         }
         else if (objectA.name == "shuttle" && objectB.name == "bullet") {
            // print("GAME OVER!")
@@ -653,6 +693,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectB.removeFromParent()
             playerScore += 20
             scoreLabel.text = ("\(playerScore)")
+             ufodie.play()
         }
 //        // ENEMY BULLET WITH PLAYER
 //         if (objectA.name == "airbullet" && objectB.name == "jet") {
@@ -694,6 +735,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
             print(" show \(self.remainingLifeNode.count)")
             print(" flag before \(decreaseLivescount) ")
+            playerdie.play()
             player.position = CGPoint(x: 400, y: 100)
             addChild(self.player)
             //RESTARTING THE SCENE IF PLAYER LIVES ARE OVER
@@ -799,6 +841,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //making bullets only if player lives are left
             if(remainingLifeNode.count != 0){
                 makeBullet(xPosition: playerX, yPosition: playerY)
+                playershoot.play()
                 
             }
             playerBulletTime = currentTime
