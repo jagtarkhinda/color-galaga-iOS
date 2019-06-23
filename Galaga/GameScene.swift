@@ -20,9 +20,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scoreLabel: SKLabelNode!
     var timeLabel: SKLabelNode!
     var remainingLife = 3
-    var UFOCount = 0;
     var UFODown = 0
-    var AIRCRAFTCount = 0;
+    var playerScore = 0;
     var remainingLifeNode:[SKSpriteNode] = []
     var decreaseLivescount:Bool = false;
     var timeLeft = 119
@@ -592,13 +591,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
+            playerScore += 100
+            scoreLabel.text = ("\(playerScore)")
            
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             //print("GAME OVER!")
-           
            objectA.removeFromParent()
             objectB.removeFromParent()
+            playerScore += 100
+            scoreLabel.text = ("\(playerScore)")
             
         }
         if (objectA.name == "bullet" && objectB.name == "coming") {
@@ -606,14 +608,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectB.removeFromParent()
             objectA.removeFromParent()
             moveUFO.physicsBody = nil
+            playerScore += 200
+            scoreLabel.text = ("\(playerScore)")
           
         }
         else if (objectA.name == "coming" && objectB.name == "bullet") {
             print("DEAD OVER!")
-            
             objectA.removeFromParent()
             objectB.removeFromParent()
             moveUFO.physicsBody = nil
+            playerScore += 200
+            scoreLabel.text = ("\(playerScore)")
            
         }
         // COLLISION WITH AIRCRAFT
@@ -621,12 +626,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
+            playerScore += 50
+            scoreLabel.text = ("\(playerScore)")
             
         }
         else if (objectA.name == "aircraft" && objectB.name == "bullet") {
            // print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
+            playerScore += 50
+            scoreLabel.text = ("\(playerScore)")
           
         }
         
@@ -635,11 +644,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
+            playerScore += 20
+            scoreLabel.text = ("\(playerScore)")
         }
         else if (objectA.name == "shuttle" && objectB.name == "bullet") {
            // print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
+            playerScore += 20
+            scoreLabel.text = ("\(playerScore)")
         }
 //        // ENEMY BULLET WITH PLAYER
 //         if (objectA.name == "airbullet" && objectB.name == "jet") {
