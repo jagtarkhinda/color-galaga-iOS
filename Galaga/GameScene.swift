@@ -539,6 +539,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        
          let randomUFOMove = Int.random(in: 0...(ufos.count - 1))
             moveUFO = ufos[randomUFOMove]
+            moveUFO.name = "coming"
+            moveUFO.physicsBody?.categoryBitMask = 2
+            moveUFO.physicsBody?.collisionBitMask = 1
+            moveUFO.physicsBody?.contactTestBitMask = 1
             UFODown = 0
             ufos.remove(at: randomUFOMove)
             pastTime = time
@@ -588,27 +592,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
-            UFOCount += 1
+           
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             //print("GAME OVER!")
            
            objectA.removeFromParent()
             objectB.removeFromParent()
-            UFOCount += 1
+            
+        }
+        if (objectA.name == "bullet" && objectB.name == "coming") {
+             print("DEAD OVER!")
+            objectB.removeFromParent()
+            objectA.removeFromParent()
+            moveUFO.physicsBody = nil
+          
+        }
+        else if (objectA.name == "coming" && objectB.name == "bullet") {
+            print("DEAD OVER!")
+            
+            objectA.removeFromParent()
+            objectB.removeFromParent()
+            moveUFO.physicsBody = nil
+           
         }
         // COLLISION WITH AIRCRAFT
          if (objectA.name == "bullet" && objectB.name == "aircraft") {
            // print("GAME OVER!")
             objectB.removeFromParent()
             objectA.removeFromParent()
-            AIRCRAFTCount += 1
+            
         }
         else if (objectA.name == "aircraft" && objectB.name == "bullet") {
            // print("GAME OVER!")
             objectA.removeFromParent()
             objectB.removeFromParent()
-            AIRCRAFTCount += 1
+          
         }
         
             // COLLISION WITH SHUTTLE
@@ -622,22 +641,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             objectA.removeFromParent()
             objectB.removeFromParent()
         }
-        // ENEMY BULLET WITH PLAYER
-         if (objectA.name == "airbullet" && objectB.name == "jet") {
-            print("PLAYER DIE")
-            objectB.removeFromParent()
-           objectA.removeFromParent()
-            decreaseLivescount = true
-            decreasePlayerLifeCount(live: decreaseLivescount)
-            //decrease player life
-        }
-        else if (objectA.name == "jet" && objectB.name == "airbullet") {
-            print("PLAYER DIE")
-          objectA.removeFromParent()
-          objectB.removeFromParent()
-            decreaseLivescount = true
-            decreasePlayerLifeCount(live: decreaseLivescount)
-        }
+//        // ENEMY BULLET WITH PLAYER
+//         if (objectA.name == "airbullet" && objectB.name == "jet") {
+//            print("PLAYER DIE")
+//          //  objectB.removeFromParent()
+//          // objectA.removeFromParent()
+//            //decrease player life
+//        }
+//        else if (objectA.name == "jet" && objectB.name == "airbullet") {
+//            print("PLAYER DIE")
+//         // objectA.removeFromParent()
+//       //   objectB.removeFromParent()
+//
+//        }
         
         
 //        else if (objectA.name == "cat" && objectB.name == "bed") {
@@ -670,6 +686,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //RESTARTING THE SCENE IF PLAYER LIVES ARE OVER
             if(remainingLifeNode.count == 0)
             {
+                //ADD A GAME OVER SCENE
                 let newScene = GameScene(size: self.size)
                 newScene.scaleMode = self.scaleMode
                 let animation = SKTransition.fade(withDuration: 1.0)
@@ -696,8 +713,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         
         //CHECKING GAME WIN CONDITION
-        print("UFO's LEft: \(UFOCount)")
-        
+        if((self.childNode(withName: "aircraft")) == nil
+            && (self.childNode(withName: "ufo") == nil)
+            &&
+            (self.childNode(withName: "shuttle") == nil))
+      {
+        //ADD THE GAME WON SCENE
+        print("WON")
+        }
         if (ufoCollideTime == nil) {
             ufoCollideTime = currentTime
         }
@@ -720,13 +743,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Make airCraft Appear on screen
             makeAirCraftAppear()
             // Make Shuttle Appear on screen
-           // makeShuttleAppear()
+            makeShuttleAppear()
             
            
         }
         
         // gird setting flag
-        if(trackUfoCount == 4 && trackAirCraftCount == 6 /* && trackShuttleCount == 10*/){
+        if(trackUfoCount == 4 && trackAirCraftCount == 6  && trackShuttleCount == 10){
             if (isGridSetTimer == nil) {
                 isGridSetTimer = currentTime
             }
@@ -741,7 +764,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(isGridSet == true){
             makeUfoMove()
             makeAirCraftMove()
-            //makeShuttleMove()
+            makeShuttleMove()
             moveBullet()
             moveAirCraftBullet()
             
@@ -775,7 +798,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let bulletTimePassed = (currentTime - bulletTime!)
         if(bulletTimePassed >= 5 && isGridSet == true) {
-            makeAirCraftBullet()
+            //makeAirCraftBullet()
             
             bulletTime = currentTime
         }
@@ -792,11 +815,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             
         
-        if (self.player.intersects(moveUFO) == true || moveUFO.position.y < 100) {
+        if (self.player.intersects(moveUFO) == true && (moveUFO.physicsBody != nil)){
             // ufo die
-            if (collidehapped >= 4) {
+            if (collidehapped >= 5) {
             moveUFO.removeFromParent()
-            
+            //    moveUFO.physicsBody = nil
             //player die
             player.removeFromParent()
             //live decrease
