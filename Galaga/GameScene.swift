@@ -21,7 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timeLabel: SKLabelNode!
     var remainingLife = 3
     var remainingLifeNode:[SKSpriteNode] = []
-    var decreaseLivescount = 0
+    var decreaseLivescount:Bool = false;
     var timeLeft = 119
     // variable to store scores
     var socreCount:Int = 0;
@@ -577,14 +577,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // COLLISION WITH UFO
         if (objectA.name == "bullet" && objectB.name == "ufo") {
            // print("GAME OVER!")
-            objectB.removeFromParent()
-            objectA.removeFromParent()
+            //objectB.removeFromParent()
+         //   objectA.removeFromParent()
         }
         else if (objectA.name == "ufo" && objectB.name == "bullet") {
             //print("GAME OVER!")
            
-            objectA.removeFromParent()
-            objectB.removeFromParent()
+          //  objectA.removeFromParent()
+          //  objectB.removeFromParent()
         }
         // COLLISION WITH AIRCRAFT
          if (objectA.name == "bullet" && objectB.name == "aircraft") {
@@ -612,13 +612,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // ENEMY BULLET WITH PLAYER
          if (objectA.name == "airbullet" && objectB.name == "jet") {
             print("PLAYER DIE")
-            objectB.removeFromParent()
-            objectA.removeFromParent()
+            //objectB.removeFromParent()
+           // objectA.removeFromParent()
         }
         else if (objectA.name == "jet" && objectB.name == "airbullet") {
             print("PLAYER DIE")
-            objectA.removeFromParent()
-            objectB.removeFromParent()
+          //  objectA.removeFromParent()
+          //  objectB.removeFromParent()
         }
         
         
@@ -644,9 +644,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var isGridSetTimer:TimeInterval?
     var bulletTime:TimeInterval?
     var playerBulletTime:TimeInterval?
+    var ufoCollideTime:TimeInterval?
     
     
     override func update(_ currentTime: TimeInterval) {
+        
+        if (ufoCollideTime == nil) {
+            ufoCollideTime = currentTime
+        }
         // Called before each frame is rendered
         self.moveBackground()
         
@@ -729,26 +734,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         //Detecting intersection with ufo
         if(moveUFO != nil){
+            
+            // print a message every 3 seconds
+            let collidehapped = (currentTime - ufoCollideTime!)
+            
+          
+               
         if (self.player.intersects(moveUFO) == true) {
             // ufo die
             moveUFO.removeFromParent()
+            
             //player die
             player.removeFromParent()
             //live decrease
-            
-            //taking count because it collides too many times
-            if(decreaseLivescount == 0 ){
-               //removing from scene
-                 remainingLifeNode.last?.removeFromParent()
-                
-               //removing from array
-                self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
-                decreaseLivescount += 1;
-                 self.player.position = CGPoint(x: 400, y: 100)
-                self.addChild(player)
+              if (collidehapped >= 4) {
+              decreaseLivescount = true
+             ufoCollideTime = currentTime
+        }
             }
         }
         
+        //taking count because it collides too many times
+        if(decreaseLivescount == true ){
+            //removing from scene
+            remainingLifeNode.last?.removeFromParent()
+            
+            //removing from array
+            self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
+            print(" show \(self.remainingLifeNode.count)")
+            print(" flag before \(decreaseLivescount) ")
+            player.position = CGPoint(x: 400, y: 0)
+            self.addChild(player)
+            decreaseLivescount = false;
+             print(" flag after \(decreaseLivescount) ")
         }
         
     }
