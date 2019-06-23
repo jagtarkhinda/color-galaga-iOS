@@ -742,12 +742,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                
         if (self.player.intersects(moveUFO) == true) {
             // ufo die
+            if (collidehapped >= 4) {
             moveUFO.removeFromParent()
             
             //player die
             player.removeFromParent()
             //live decrease
-              if (collidehapped >= 4) {
+            
               decreaseLivescount = true
              ufoCollideTime = currentTime
         }
@@ -763,8 +764,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.remainingLifeNode.remove(at: self.remainingLifeNode.count - 1)
             print(" show \(self.remainingLifeNode.count)")
             print(" flag before \(decreaseLivescount) ")
-            player.position = CGPoint(x: 400, y: 0)
-            self.addChild(player)
+            player.position = CGPoint(x: 400, y: 100)
+            addChild(self.player)
+            if(remainingLifeNode.count == 0)
+            {
+                let newScene = GameScene(size: self.size)
+                newScene.scaleMode = self.scaleMode
+                let animation = SKTransition.fade(withDuration: 1.0)
+                self.view?.presentScene(newScene, transition: animation)
+            }
             decreaseLivescount = false;
              print(" flag after \(decreaseLivescount) ")
         }
